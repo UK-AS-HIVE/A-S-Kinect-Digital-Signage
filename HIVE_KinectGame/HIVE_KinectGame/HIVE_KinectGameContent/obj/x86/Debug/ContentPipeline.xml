@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline" xmlns:Framework="Microsoft.Xna.Framework" xmlns:Processors="Microsoft.Xna.Framework.Content.Pipeline.Processors">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <Item>
+      <Source>joint.png</Source>
+      <Name>joint</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\joint.xnb</Output>
+      <Time>2013-01-29T12:06:53.9750267-05:00</Time>
+    </Item>
+    <Item>
+      <Source>dude.fbx</Source>
+      <Name>dude</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>SkinnedModelProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\dude.xnb</Output>
+      <Time>2012-09-19T00:01:38-04:00</Time>
+      <Dependency>
+        <Key>obj\x86\Debug\dude_0.xml</Key>
+        <Value>2013-02-13T16:47:45.4250993-05:00</Value>
+      </Dependency>
+      <Request>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\head_0.xnb</Request>
+      <Request>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\jacket_0.xnb</Request>
+      <Request>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\pants_0.xnb</Request>
+      <Request>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\upBodyC_0.xnb</Request>
+    </Item>
+    <Item>
+      <Source>dude.fbx</Source>
+      <Importer>FbxImporter</Importer>
+      <Options>IntermediateFile, DontCacheImportedData</Options>
+      <Output>obj\x86\Debug\dude_0.xml</Output>
+      <Time>2012-09-19T00:01:38-04:00</Time>
+    </Item>
+    <Item>
+      <Source>head.tga</Source>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Parameters>
+        <Data Key="ColorKeyColor" Type="Framework:Color">FFFF00FF</Data>
+        <Data Key="ColorKeyEnabled" Type="bool">true</Data>
+        <Data Key="TextureFormat" Type="Processors:TextureProcessorOutputFormat">DxtCompressed</Data>
+        <Data Key="GenerateMipmaps" Type="bool">true</Data>
+        <Data Key="ResizeToPowerOfTwo" Type="bool">false</Data>
+        <Data Key="PremultiplyAlpha" Type="bool">true</Data>
+      </Parameters>
+      <Options>None</Options>
+      <Output>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\head_0.xnb</Output>
+      <Time>2013-02-05T12:07:08-05:00</Time>
+    </Item>
+    <Item>
+      <Source>jacket.tga</Source>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Parameters>
+        <Data Key="ColorKeyColor" Type="Framework:Color">FFFF00FF</Data>
+        <Data Key="ColorKeyEnabled" Type="bool">true</Data>
+        <Data Key="TextureFormat" Type="Processors:TextureProcessorOutputFormat">DxtCompressed</Data>
+        <Data Key="GenerateMipmaps" Type="bool">true</Data>
+        <Data Key="ResizeToPowerOfTwo" Type="bool">false</Data>
+        <Data Key="PremultiplyAlpha" Type="bool">true</Data>
+      </Parameters>
+      <Options>None</Options>
+      <Output>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\jacket_0.xnb</Output>
+      <Time>2013-02-05T12:06:46-05:00</Time>
+    </Item>
+    <Item>
+      <Source>pants.tga</Source>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Parameters>
+        <Data Key="ColorKeyColor" Type="Framework:Color">FFFF00FF</Data>
+        <Data Key="ColorKeyEnabled" Type="bool">true</Data>
+        <Data Key="TextureFormat" Type="Processors:TextureProcessorOutputFormat">DxtCompressed</Data>
+        <Data Key="GenerateMipmaps" Type="bool">true</Data>
+        <Data Key="ResizeToPowerOfTwo" Type="bool">false</Data>
+        <Data Key="PremultiplyAlpha" Type="bool">true</Data>
+      </Parameters>
+      <Options>None</Options>
+      <Output>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\pants_0.xnb</Output>
+      <Time>2013-02-05T12:06:22-05:00</Time>
+    </Item>
+    <Item>
+      <Source>upBodyC.tga</Source>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Parameters>
+        <Data Key="ColorKeyColor" Type="Framework:Color">FFFF00FF</Data>
+        <Data Key="ColorKeyEnabled" Type="bool">true</Data>
+        <Data Key="TextureFormat" Type="Processors:TextureProcessorOutputFormat">DxtCompressed</Data>
+        <Data Key="GenerateMipmaps" Type="bool">true</Data>
+        <Data Key="ResizeToPowerOfTwo" Type="bool">false</Data>
+        <Data Key="PremultiplyAlpha" Type="bool">true</Data>
+      </Parameters>
+      <Options>None</Options>
+      <Output>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\upBodyC_0.xnb</Output>
+      <Time>2013-02-05T12:07:18-05:00</Time>
+    </Item>
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <TargetProfile>HiDef</TargetProfile>
+      <BuildConfiguration>Debug</BuildConfiguration>
+      <CompressContent>false</CompressContent>
+      <RootDirectory>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGameContent\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGameContent\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll</Key>
+        <Value>2013-02-13T16:14:46.076887-05:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2013-01-22T12:14:30.1892401-05:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
