@@ -80,7 +80,7 @@ namespace HIVE_KinectGame
         /// <summary>
         /// Camera Min Distance value.
         /// </summary>
-        private const float CameraMinDistance = 10.0f;
+        private const float CameraMinDistance = 15.0f;
 
         /// <summary>
         /// Camera starting Distance value.
@@ -90,7 +90,7 @@ namespace HIVE_KinectGame
         /// <summary>
         /// Camera starting Distance value.
         /// </summary>
-        private const float CameraStartingTranslation = 30.0f;
+        private const float CameraStartingTranslation = 40.0f;
 
         /// <summary>
         /// Viewing Camera arc.

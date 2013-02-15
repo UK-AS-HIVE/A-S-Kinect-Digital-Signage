@@ -1,1 +1,2 @@
 C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGameContent\obj\x86\Debug\HIVE_KinectGameContent.contentprojResolveAssemblyReference.cache
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGameContent\obj\x86\Debug\ResolveAssemblyReference.cache
