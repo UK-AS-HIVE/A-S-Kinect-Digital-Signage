@@ -27,7 +27,7 @@ namespace HIVE_KinectGame
     /// <summary>
     /// This class is responsible for animating an avatar using a skeleton stream.
     /// </summary>
-    [CLSCompliant(true)]
+    // 
     public class AvatarAnimator : DrawableGameComponent
     {
         /// <summary>

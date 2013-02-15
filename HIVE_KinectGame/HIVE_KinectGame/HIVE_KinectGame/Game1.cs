@@ -220,8 +220,10 @@ namespace HIVE_KinectGame
         /// <summary>
         /// Array of background images to display for the 3D environment.
         /// We will set up the total number of images dynamically later.
+        /// Also, the splash screen image.
         /// </summary>
         private Texture2D[] backgroundImage = null;
+        private Texture2D splashScreen = null;
 
         /// <summary>
         /// A placeholder for which background image we will use
@@ -249,7 +251,16 @@ namespace HIVE_KinectGame
         /// A timer for controlling when events happen (i.e. when do we take snapshots and change the on
         /// screen display)
         /// </summary>
-         
+        double gameTimer = 0;
+
+        /// <summary>
+        /// Fading controls for changing screens etc.
+        /// We only need to do the math if we want it, hence the flag.
+        /// </summary>
+        private int alphaValue = 255;
+        private Boolean updateAlpha = false;
+        private int fadeAmount = 3;
+        
         #endregion
 
         /// <summary>
@@ -380,7 +391,11 @@ namespace HIVE_KinectGame
                     backgroundImage[ctr] = Texture2D.FromStream(GraphicsDevice, stream);
                 }
             }
-            
+
+            // Load in the splash screen image.
+            FileStream splashStream = File.OpenRead(Content.RootDirectory + "\\splash.png");
+            this.splashScreen = Texture2D.FromStream(GraphicsDevice, splashStream);
+
             // Magic function that maps the joints to the avatar for animation.
             this.BuildJointHierarchy();
 
@@ -580,6 +595,7 @@ namespace HIVE_KinectGame
             {
                 this.animator[0].SkeletonDrawn = false;
             }
+
             if (null != this.animator[1])
             {
                 this.animator[1].SkeletonDrawn = false;
@@ -606,6 +622,7 @@ namespace HIVE_KinectGame
                     this.SetScreenMode();
                 }
 
+                // Manual override (mostly for testing)
                 // Press S to take a picture
                 if (this.currentKeyboard.IsKeyDown(Keys.S))
                 {
@@ -620,6 +637,7 @@ namespace HIVE_KinectGame
                         kinect.ElevationAngle += 5;
                     }
                 }
+
                 if (this.currentKeyboard.IsKeyDown(Keys.Down))
                 {
                     if (kinect.ElevationAngle > (kinect.MinElevationAngle + 5))
@@ -628,6 +646,25 @@ namespace HIVE_KinectGame
                     }
                 }
 
+               
+
+            }
+
+            // Update the game timer
+            this.gameTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+            // If we've been on this particular 3D scene for 10 seconds, take a snap and change it!
+            if (this.gameState == 1 && gameTimer > 10)
+            {
+                // Make sure to reset the game timer.
+                this.gameTimer = 0;
+                this.takeScreencap = true;
+            }
+
+            // Update alpha channel if we want to change it.
+            if (this.updateAlpha)
+            {
+                this.alphaValue -= this.fadeAmount;
             }
 
             base.Update(gameTime);
@@ -782,10 +819,22 @@ namespace HIVE_KinectGame
             // If we are in the intro graphic screen. This will only happen at game startup.
             if (this.gameState == 0) 
             {
-                // TODO: Display the opening graphic.
+                if (this.updateAlpha == false && (this.gameTimer > 3))
+                {
+                    this.updateAlpha = true;
+                }
+
+                // Display the opening graphic.
+                spriteBatch.Begin();
+                spriteBatch.Draw(this.splashScreen, new Rectangle(0, 0, (graphics.PreferredBackBufferWidth), graphics.PreferredBackBufferHeight), new Microsoft.Xna.Framework.Color((byte)MathHelper.Clamp(this.alphaValue, 0, 255), (byte)MathHelper.Clamp(this.alphaValue, 0, 255), (byte)MathHelper.Clamp(this.alphaValue, 0, 255), (byte)MathHelper.Clamp(this.alphaValue, 0, 255)));
+                spriteBatch.End();
 
                 // Change gamestate to move into the 3D environment.
-                this.gameState = 1;
+                if (this.alphaValue < 1)
+                {
+                    this.updateAlpha = false;
+                    this.gameState = 1;
+                }
             }
 
             // If we are in the main 3D envrionment. This is the majority of the game.
