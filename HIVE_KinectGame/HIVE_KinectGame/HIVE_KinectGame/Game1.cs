@@ -146,8 +146,8 @@ namespace HIVE_KinectGame
         /// </summary>
         private const int WindowedWidth = 1280;
         private const int WindowedHeight = 720;
-        private const int FullScreenWidth = 1680; // Change to 1920 for final
-        private const int FullScreenHeight = 1050; // Change to 1080 for final
+        private const int FullScreenWidth = 1920; // Change to 1920 for final
+        private const int FullScreenHeight = 1080; // Change to 1080 for final
 
         /// <summary>
         /// This will be loaded with the 3D mesh of the avatars we will animate
@@ -222,13 +222,24 @@ namespace HIVE_KinectGame
         /// We will set up the total number of images dynamically later.
         /// Also, the splash screen image.
         /// </summary>
-        private Texture2D[] backgroundImage = null;
+        private Texture2D[] envImages = null;
+        private Texture2D backgroundImage = null;
         private Texture2D splashScreen = null;
 
         /// <summary>
-        /// A placeholder for which background image we will use
+        /// The array of slideshow images that we will look at during the show.
         /// </summary>
-        private int whichBackgroundImage = 0;
+        private Texture2D[] slideshowImages = null;
+
+        /// <summary>
+        /// The index of which slide in the slideshow we look at.
+        /// </summary>
+        private int whichSlide = 0;
+
+        /// <summary>
+        /// A placeholder for which environment image we will use
+        /// </summary>
+        private int whichEnv = 0;
 
         /// <summary>
         /// We have to change a few things each time we change scene, so this will keep track of scene
@@ -378,23 +389,27 @@ namespace HIVE_KinectGame
 
             // Load in the background images to place in the 3D environment. 
             // Discover all image files in the backgrounds folder (Content\backgrounds) and load them
-            string[] backgroundFiles = Directory.GetFiles(Content.RootDirectory + "\\" + "backgrounds");
+            string[] envFiles = Directory.GetFiles(Content.RootDirectory + "\\" + "backgrounds");
 
             // Initialize our background image array to the number of images found.
-            this.backgroundImage = new Texture2D[backgroundFiles.Length];
+            this.envImages = new Texture2D[envFiles.Length];
 
             // For each image we found in this directory, insert it into the array.
-            for (int ctr = 0; ctr < backgroundFiles.Length; ctr++)
+            for (int ctr = 0; ctr < envFiles.Length; ctr++)
             {
-                using (FileStream stream = File.OpenRead(backgroundFiles[ctr]))
+                using (FileStream stream = File.OpenRead(envFiles[ctr]))
                 {
-                    backgroundImage[ctr] = Texture2D.FromStream(GraphicsDevice, stream);
+                    this.envImages[ctr] = Texture2D.FromStream(GraphicsDevice, stream);
                 }
             }
 
             // Load in the splash screen image.
             FileStream splashStream = File.OpenRead(Content.RootDirectory + "\\splash.png");
             this.splashScreen = Texture2D.FromStream(GraphicsDevice, splashStream);
+
+            // Load in the default background screen image.
+            FileStream backStream = File.OpenRead(Content.RootDirectory + "\\asframe.png");
+            this.backgroundImage = Texture2D.FromStream(GraphicsDevice, backStream);
 
             // Magic function that maps the joints to the avatar for animation.
             this.BuildJointHierarchy();
@@ -515,7 +530,7 @@ namespace HIVE_KinectGame
                 Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
 
                 // Get the current background and store it in a Texture2D that we can modify.
-                Texture2D tempTexture = this.backgroundImage[this.whichBackgroundImage];
+                Texture2D tempTexture = this.envImages[this.whichEnv];
 
                 // Step through and detect where users are detected. If a user occupies a certain pixel, then we will keep it.
                 // If a user is not in that particular pixel, then we trash it.
@@ -652,14 +667,6 @@ namespace HIVE_KinectGame
 
             // Update the game timer
             this.gameTimer += gameTime.ElapsedGameTime.TotalSeconds;
-
-            // If we've been on this particular 3D scene for 10 seconds, take a snap and change it!
-            if (this.gameState == 1 && gameTimer > 10)
-            {
-                // Make sure to reset the game timer.
-                this.gameTimer = 0;
-                this.takeScreencap = true;
-            }
 
             // Update alpha channel if we want to change it.
             if (this.updateAlpha)
@@ -816,6 +823,7 @@ namespace HIVE_KinectGame
             // Clear the screen so we don't have artifacts from updating.
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
 
+            #region DisplaySplashScreenState
             // If we are in the intro graphic screen. This will only happen at game startup.
             if (this.gameState == 0) 
             {
@@ -834,29 +842,52 @@ namespace HIVE_KinectGame
                 {
                     this.updateAlpha = false;
                     this.gameState = 1;
+                    this.gameTimer = 0;
                 }
             }
+            #endregion
 
+            #region Display3DEnvironmentState
             // If we are in the main 3D envrionment. This is the majority of the game.
             if (this.gameState == 1)
             {
                 // If we are changing the 3D environment, then ensure we load a different background image than we just had.
                 if (this.sceneJustChanged == true)
                 {
-                    int tempInt = this.whichBackgroundImage;
-                    while (this.whichBackgroundImage == tempInt)
+                    int tempInt = this.whichEnv;
+                    while (this.whichEnv == tempInt)
                     {
-                        this.whichBackgroundImage = randomNum.Next(backgroundImage.Length);
+                        this.whichEnv = randomNum.Next(this.envImages.Length);
                     }
+
                     this.sceneJustChanged = false;
                 }
 
-                // Draw the background images.
-                if (backgroundImage != null)
+                // Draw the background template
+                if (this.backgroundImage != null)
                 {
                     spriteBatch.Begin();
-                    spriteBatch.Draw(backgroundImage[this.whichBackgroundImage], new Rectangle(0, 0, (graphics.PreferredBackBufferWidth), graphics.PreferredBackBufferHeight), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.Draw(this.backgroundImage, new Rectangle(0, 0, (graphics.PreferredBackBufferWidth), graphics.PreferredBackBufferHeight), Microsoft.Xna.Framework.Color.White);
                     spriteBatch.End();
+                }
+
+                // Draw the environment images.
+                if (this.envImages != null)
+                {
+                    if (this.isFullScreen)
+                    {
+                        spriteBatch.Begin();
+                        // Hard-coded values are bad.
+                        spriteBatch.Draw(this.envImages[this.whichEnv], new Rectangle(553, 44, 1326, 997), Microsoft.Xna.Framework.Color.White);
+                        spriteBatch.End();
+                    }
+                    else
+                    {
+                        spriteBatch.Begin();
+                        // Windowed mode is forcing 1280x720....
+                        spriteBatch.Draw(this.envImages[this.whichEnv], new Rectangle(369, 29, 884, 664), Microsoft.Xna.Framework.Color.White);
+                        spriteBatch.End();
+                    }
                 }
 
                 // Update the viewing camera.
@@ -879,16 +910,93 @@ namespace HIVE_KinectGame
                         this.animator[1].Draw(gameTime, Microsoft.Xna.Framework.Matrix.Identity, this.view, this.projection);
                     }
                 }
-            }
 
+                // If we have taken 5 snaps, then go to the slideshow.
+                if (this.snapNumber % 5 == 0 && this.snapNumber > 0)
+                {
+                    // Okay we need to add one to snapNumber when we get to this point
+                    // otherwise it will get stuck in an infinite loop. 
+                    // There is a more graceful way to do this, but I'm crunched on time.
+                    this.snapNumber++;
+                    this.gameState = 2;
+                    this.gameTimer = 0;
+                }
+
+                // If we've been on this particular 3D scene for 10 seconds, take a snap and change it!
+                if (gameTimer > 1)
+                {
+                    // Make sure to reset the game timer.
+                    this.gameTimer = 0;
+                    this.takeScreencap = true;
+                }
+            }
+            #endregion
+
+            #region DisplaySlideshowState
             // If gameState is 2, then go to the slideshow display.
             if (this.gameState == 2)
             {
-                // TODO: Load and display the screenshots.
+                GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
+                // Load in the background images to place in the 3D environment. 
+                // Discover all image files in the backgrounds folder (Content\backgrounds) and load them
+                string[] slideshowFiles = Directory.GetFiles(Content.RootDirectory + "\\" + "screenshots");
+
+                if (this.sceneJustChanged == true)
+                {
+                    int tempInt = this.whichSlide;
+                    while (this.whichSlide == tempInt)
+                    {
+                        this.whichSlide = randomNum.Next(slideshowFiles.Length);
+                    }
+
+                    this.sceneJustChanged = false;
+                }
+
+                // Initialize our background image array to the number of images found.
+                this.slideshowImages = new Texture2D[slideshowFiles.Length];
+
+                // For each image we found in this directory, insert it into the array.
+                for (int ctr = 0; ctr < this.slideshowImages.Length; ctr++)
+                {
+                    using (FileStream stream = File.OpenRead(slideshowFiles[ctr]))
+                    {
+                        this.slideshowImages[ctr] = Texture2D.FromStream(GraphicsDevice, stream);
+                    }
+                }
+
+                // Draw the background images.
+                if (backgroundImage != null)
+                {
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(this.backgroundImage, new Rectangle(0, 0, (graphics.PreferredBackBufferWidth), graphics.PreferredBackBufferHeight), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.End();
+                }
+
+                if (this.slideshowImages != null)
+                {
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(369, 29, 884, 664), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.End();
+                }
+
+                // If we've looked at this image for a few seconds, change it.
+                if (Math.Floor(this.gameTimer) % 2 == 0)
+                {
+                    this.sceneJustChanged = true;
+                }
+
+                if (this.gameTimer > 6)
+                {
+                    this.gameState = 0;
+                    this.gameTimer = 0;
+                    this.alphaValue = 255;
+                }
 
                 // When we go back to the 3D environment, make sure we load a new background image.
                 this.sceneJustChanged = true;
             }
+
+            #endregion
 
             base.Draw(gameTime);
         }
