@@ -127,9 +127,10 @@ namespace HIVE_KinectGame
         private KinectSensor kinect = null;
 
         /// <summary>
-        /// Texture2D source that will store the RGB video pixels stream from the Kinect
+        /// Image frames from the kinect
         /// </summary>
-        private Texture2D colorVideo;
+        ColorImageFrame colorFrame = null;
+        DepthImageFrame depthFrame = null;
 
         /// <summary>
         /// Basic XNA effect for drawing on screen
@@ -194,11 +195,6 @@ namespace HIVE_KinectGame
         /// Adjust Avatar lean when leaning back to reduce lean.
         /// </summary>
         private bool leanAdjust;
-
-        /// <summary>
-        /// Variables needed to process the depth stream from the Kinect for user detection
-        /// </summary>
-        private Byte[] colorPixels;
 
         /// <summary>
         /// Flag for controlling taking a photo of the players in the 3D environment. If true, we will take and save the image
@@ -270,7 +266,7 @@ namespace HIVE_KinectGame
         /// </summary>
         private int alphaValue = 255;
         private Boolean updateAlpha = false;
-        private int fadeAmount = 3;
+        private int fadeAmount = 10;
         
         #endregion
 
@@ -508,43 +504,107 @@ namespace HIVE_KinectGame
         protected void kinect_AllFramesReady(object sender, AllFramesReadyEventArgs imageFrames)
         {
             // RGB Image Frame
-            ColorImageFrame colorFrame = imageFrames.OpenColorImageFrame();
+            this.colorFrame = imageFrames.OpenColorImageFrame();
 
             // Depth Image Frame
-            DepthImageFrame depthFrame = imageFrames.OpenDepthImageFrame();
+            this.depthFrame = imageFrames.OpenDepthImageFrame();
 
             // If we have depth and image data, and we want to take a screenshot of the users in a particular environment.
-            if (colorFrame != null && depthFrame != null && this.takeScreencap == true)
+            if (this.colorFrame != null && this.depthFrame != null && this.takeScreencap == true)
             {
-                // Initialize the pixel array that will hold user image data
-                this.colorPixels = new Byte[colorFrame.PixelDataLength];
-                colorFrame.CopyPixelDataTo(this.colorPixels);
 
-                // Initialize the color image frame
-                this.colorVideo = new Texture2D(graphics.GraphicsDevice, kinect.ColorStream.FrameWidth, kinect.ColorStream.FrameHeight);
+                /// <summary>
+                /// Intermediate storage for the depth data received from the sensor
+                /// </summary>
+                DepthImagePixel[] depthPixels = new DepthImagePixel[this.kinect.DepthStream.FramePixelDataLength];;
 
-                // Write pixels to the color image frame so we can extract users.
-                this.colorVideo.SetData(this.colorPixels);
+                /// <summary>
+                /// Intermediate storage for the color data received from the camera
+                /// </summary>
+                byte[] colorPixels = new byte[this.kinect.ColorStream.FramePixelDataLength]; ;
 
-                // Set up a screenshot.
-                Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
+                /// <summary>
+                /// Intermediate storage for the green screen opacity mask
+                /// </summary>
+                int[] greenScreenPixelData = new int[this.kinect.DepthStream.FramePixelDataLength]; ;
 
-                // Get the current background and store it in a Texture2D that we can modify.
-                Texture2D tempTexture = this.envImages[this.whichEnv];
+                /// <summary>
+                /// Intermediate storage for the depth to color mapping
+                /// </summary>
+                ColorImagePoint[] colorCoordinates = new ColorImagePoint[this.kinect.DepthStream.FramePixelDataLength]; ;
 
-                // Step through and detect where users are detected. If a user occupies a certain pixel, then we will keep it.
-                // If a user is not in that particular pixel, then we trash it.
-                // TODO: Make this magic work. Can we use alpha channels and just overlay the user into the background image?
-                // TODO: Overlay the user pixels on top of this tempTexture
+                /// <summary>
+                /// Inverse scaling factor between color and depth
+                /// </summary>
+                int colorToDepthDivisor = 1;
 
-                // Now save the final image.
-                tempTexture.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-                this.snapNumber++;
-                stream.Close();
+                this.depthFrame.CopyDepthImagePixelDataTo(depthPixels);
+                this.colorFrame.CopyPixelDataTo(colorPixels);
 
-                // Set this variable to false so that we aren't continually taking images.
-                this.takeScreencap = false;
-                this.sceneJustChanged = true;
+                this.kinect.CoordinateMapper.MapDepthFrameToColorFrame(
+                    DepthImageFormat.Resolution640x480Fps30,
+                    depthPixels,
+                    ColorImageFormat.RgbResolution640x480Fps30,
+                    colorCoordinates);
+
+                Array.Clear(greenScreenPixelData, 0, greenScreenPixelData.Length);
+
+                Boolean foundPlayer = false;
+                // loop over each row and column of the depth
+                for (int y = 0; y < 480; ++y)
+                {
+                    for (int x = 0; x < 640; ++x)
+                    {
+                        // calculate index into depth array
+                        int depthIndex = x + (y * 640);
+
+                        DepthImagePixel depthPixel = depthPixels[depthIndex];
+
+                        int player = depthPixel.PlayerIndex;
+
+                        // if we're tracking a player for the current pixel, do green screen
+                        if (player > 0)
+                        {
+                            foundPlayer = true;
+                            // retrieve the depth to color mapping for the current depth pixel
+                            ColorImagePoint colorImagePoint = colorCoordinates[depthIndex];
+
+                            // scale color coordinates to depth resolution
+                            int colorInDepthX = colorImagePoint.X / colorToDepthDivisor;
+                            int colorInDepthY = colorImagePoint.Y / colorToDepthDivisor;
+
+                            // make sure the depth pixel maps to a valid point in color space
+                            // check y > 0 and y < depthHeight to make sure we don't write outside of the array
+                            // check x > 0 instead of >= 0 since to fill gaps we set opaque current pixel plus the one to the left
+                            // because of how the sensor works it is more correct to do it this way than to set to the right
+                            if (colorInDepthX > 0 && colorInDepthX < 640 && colorInDepthY >= 0 && colorInDepthY < 480)
+                            {
+                                // calculate index into the green screen pixel array
+                                int greenScreenIndex = colorInDepthX + (colorInDepthY * 640);
+
+                                // set opaque
+                                greenScreenPixelData[greenScreenIndex] = -1;
+
+                                // compensate for depth/color not corresponding exactly by setting the pixel
+                                // to the left to opaque as well
+                                greenScreenPixelData[greenScreenIndex - 1] = -1;
+                            }
+                        }
+                    }
+                }
+
+                if (foundPlayer)
+                {
+                    Texture2D finalImage = new Texture2D(graphics.GraphicsDevice, 640, 480);
+                    finalImage.SetData(greenScreenPixelData);
+
+                    Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
+                    finalImage.SaveAsPng(stream, 640, 480);
+                    stream.Close();
+                    this.snapNumber++;
+                    this.takeScreencap = false;
+                    this.sceneJustChanged = true;
+                }
             }
 
 
@@ -647,7 +707,7 @@ namespace HIVE_KinectGame
                 // Manually adjust the tilt of the kinect sensor
                 if (this.currentKeyboard.IsKeyDown(Keys.Up))
                 {
-                    if (kinect.ElevationAngle < (kinect.MaxElevationAngle - 5))
+                    if (kinect.ElevationAngle < (kinect.MaxElevationAngle + 5))
                     {
                         kinect.ElevationAngle += 5;
                     }
@@ -655,13 +715,11 @@ namespace HIVE_KinectGame
 
                 if (this.currentKeyboard.IsKeyDown(Keys.Down))
                 {
-                    if (kinect.ElevationAngle > (kinect.MinElevationAngle + 5))
+                    if (kinect.ElevationAngle > (kinect.MinElevationAngle - 5))
                     {
                         kinect.ElevationAngle -= 5;
                     }
                 }
-
-               
 
             }
 
@@ -827,7 +885,7 @@ namespace HIVE_KinectGame
             // If we are in the intro graphic screen. This will only happen at game startup.
             if (this.gameState == 0) 
             {
-                if (this.updateAlpha == false && (this.gameTimer > 3))
+                if (this.updateAlpha == false && (this.gameTimer > 5))
                 {
                     this.updateAlpha = true;
                 }
@@ -923,7 +981,7 @@ namespace HIVE_KinectGame
                 }
 
                 // If we've been on this particular 3D scene for 10 seconds, take a snap and change it!
-                if (gameTimer > 1)
+                if (gameTimer > 5)
                 {
                     // Make sure to reset the game timer.
                     this.gameTimer = 0;
