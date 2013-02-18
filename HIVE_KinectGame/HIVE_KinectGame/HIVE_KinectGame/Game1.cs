@@ -147,8 +147,8 @@ namespace HIVE_KinectGame
         /// </summary>
         private const int WindowedWidth = 1280;
         private const int WindowedHeight = 720;
-        private const int FullScreenWidth = 1920; // Change to 1920 for final
-        private const int FullScreenHeight = 1080; // Change to 1080 for final
+        private const int FullScreenWidth = 1680; // Change to 1920 for final
+        private const int FullScreenHeight = 1050; // Change to 1080 for final
 
         /// <summary>
         /// This will be loaded with the 3D mesh of the avatars we will animate
@@ -333,7 +333,7 @@ namespace HIVE_KinectGame
             kinect.Start();
          
             // Set mouse visibility in the game.
-            this.IsMouseVisible = false;
+            this.IsMouseVisible = true;
 
             // Drawing options for the avatar. Most likely these will stay false except in
             // certain circumstances. False for both enables free movement.
@@ -599,12 +599,12 @@ namespace HIVE_KinectGame
                     finalImage.SetData(greenScreenPixelData);
 
                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                    finalImage.SaveAsPng(stream, 640, 480);
+                    finalImage.SaveAsPng(stream, 1325, 995);
                     stream.Close();
                     this.snapNumber++;
+                }
                     this.takeScreencap = false;
                     this.sceneJustChanged = true;
-                }
             }
 
 
