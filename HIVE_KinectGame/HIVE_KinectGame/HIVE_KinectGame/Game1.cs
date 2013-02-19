@@ -267,6 +267,33 @@ namespace HIVE_KinectGame
         private int alphaValue = 255;
         private Boolean updateAlpha = false;
         private int fadeAmount = 10;
+
+        /// <summary>
+        /// Intermediate storage for the color data received from the camera
+        /// </summary>
+        private byte[] colorPixels = null;
+
+        /// <summary>
+        /// Intermediate storage for the depth data received from the sensor
+        /// </summary>
+        private DepthImagePixel[] depthPixels = null;
+
+        /// <summary>
+        /// Intermediate storage for the green screen opacity mask
+        /// </summary>
+        private int[] greenScreenPixelData = null;
+
+        /// <summary>
+        /// Intermediate storage for the depth to color mapping
+        /// </summary>
+        private ColorImagePoint[] colorCoordinates = null;
+
+        /// <summary>
+        /// Inverse scaling factor between color and depth
+        /// </summary>
+        private int colorToDepthDivisor = 1;
+
+        private Boolean foundPlayer = false;
         
         #endregion
 
@@ -513,43 +540,23 @@ namespace HIVE_KinectGame
             if (this.colorFrame != null && this.depthFrame != null && this.takeScreencap == true)
             {
 
-                /// <summary>
-                /// Intermediate storage for the depth data received from the sensor
-                /// </summary>
-                DepthImagePixel[] depthPixels = new DepthImagePixel[this.kinect.DepthStream.FramePixelDataLength];;
+                this.depthPixels = new DepthImagePixel[this.kinect.DepthStream.FramePixelDataLength];
+                this.greenScreenPixelData = new int[this.kinect.DepthStream.FramePixelDataLength];
+                this.colorCoordinates = new ColorImagePoint[this.kinect.DepthStream.FramePixelDataLength];
+                this.colorPixels = new Byte[colorFrame.PixelDataLength];
 
-                /// <summary>
-                /// Intermediate storage for the color data received from the camera
-                /// </summary>
-                byte[] colorPixels = new byte[this.kinect.ColorStream.FramePixelDataLength]; ;
-
-                /// <summary>
-                /// Intermediate storage for the green screen opacity mask
-                /// </summary>
-                int[] greenScreenPixelData = new int[this.kinect.DepthStream.FramePixelDataLength]; ;
-
-                /// <summary>
-                /// Intermediate storage for the depth to color mapping
-                /// </summary>
-                ColorImagePoint[] colorCoordinates = new ColorImagePoint[this.kinect.DepthStream.FramePixelDataLength]; ;
-
-                /// <summary>
-                /// Inverse scaling factor between color and depth
-                /// </summary>
-                int colorToDepthDivisor = 1;
-
-                this.depthFrame.CopyDepthImagePixelDataTo(depthPixels);
-                this.colorFrame.CopyPixelDataTo(colorPixels);
+                this.depthFrame.CopyDepthImagePixelDataTo(this.depthPixels);
+                //this.colorFrame.CopyPixelDataTo(this.colorPixels);
 
                 this.kinect.CoordinateMapper.MapDepthFrameToColorFrame(
                     DepthImageFormat.Resolution640x480Fps30,
-                    depthPixels,
+                    this.depthPixels,
                     ColorImageFormat.RgbResolution640x480Fps30,
-                    colorCoordinates);
+                    this.colorCoordinates);
 
                 Array.Clear(greenScreenPixelData, 0, greenScreenPixelData.Length);
 
-                Boolean foundPlayer = false;
+                this.foundPlayer = false;
                 // loop over each row and column of the depth
                 for (int y = 0; y < 480; ++y)
                 {
@@ -565,13 +572,13 @@ namespace HIVE_KinectGame
                         // if we're tracking a player for the current pixel, do green screen
                         if (player > 0)
                         {
-                            foundPlayer = true;
+                            this.foundPlayer = true;
                             // retrieve the depth to color mapping for the current depth pixel
-                            ColorImagePoint colorImagePoint = colorCoordinates[depthIndex];
+                            ColorImagePoint colorImagePoint = this.colorCoordinates[depthIndex];
 
                             // scale color coordinates to depth resolution
-                            int colorInDepthX = colorImagePoint.X / colorToDepthDivisor;
-                            int colorInDepthY = colorImagePoint.Y / colorToDepthDivisor;
+                            int colorInDepthX = colorImagePoint.X / this.colorToDepthDivisor;
+                            int colorInDepthY = colorImagePoint.Y / this.colorToDepthDivisor;
 
                             // make sure the depth pixel maps to a valid point in color space
                             // check y > 0 and y < depthHeight to make sure we don't write outside of the array
@@ -583,25 +590,27 @@ namespace HIVE_KinectGame
                                 int greenScreenIndex = colorInDepthX + (colorInDepthY * 640);
 
                                 // set opaque
-                                greenScreenPixelData[greenScreenIndex] = -1;
+                                this.greenScreenPixelData[greenScreenIndex] = -1;
 
                                 // compensate for depth/color not corresponding exactly by setting the pixel
                                 // to the left to opaque as well
-                                greenScreenPixelData[greenScreenIndex - 1] = -1;
+                                this.greenScreenPixelData[greenScreenIndex - 1] = -1;
                             }
                         }
                     }
                 }
 
-                if (foundPlayer)
+                if (true)//this.foundPlayer)
                 {
-                    Texture2D finalImage = new Texture2D(graphics.GraphicsDevice, 640, 480);
-                    finalImage.SetData(greenScreenPixelData);
-
+                    // Do screenshot stuff.
+                    this.colorFrame.CopyPixelDataTo(this.colorPixels);
+                    Texture2D finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
+                    finalImage.SetData(this.colorPixels);
                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                    finalImage.SaveAsPng(stream, 1325, 995);
-                    stream.Close();
+                    finalImage.SaveAsPng(stream, 640, 480);
+                    //finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
                     this.snapNumber++;
+                    stream.Close();
                 }
                     this.takeScreencap = false;
                     this.sceneJustChanged = true;
