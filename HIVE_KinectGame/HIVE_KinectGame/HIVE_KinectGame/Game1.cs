@@ -228,6 +228,11 @@ namespace HIVE_KinectGame
         private Texture2D[] slideshowImages = null;
 
         /// <summary>
+        /// The final rendered image with the screenscreen processed onto it.
+        /// </summary>
+        private Texture2D finalImage = null;
+
+        /// <summary>
         /// The index of which slide in the slideshow we look at.
         /// </summary>
         private int whichSlide = 0;
@@ -271,7 +276,7 @@ namespace HIVE_KinectGame
         /// <summary>
         /// Intermediate storage for the color data received from the camera
         /// </summary>
-        private byte[] colorPixels = null;
+        private Byte[] colorPixels = null;
 
         /// <summary>
         /// Intermediate storage for the depth data received from the sensor
@@ -546,7 +551,7 @@ namespace HIVE_KinectGame
                 this.colorPixels = new Byte[colorFrame.PixelDataLength];
 
                 this.depthFrame.CopyDepthImagePixelDataTo(this.depthPixels);
-                //this.colorFrame.CopyPixelDataTo(this.colorPixels);
+                this.colorFrame.CopyPixelDataTo(this.colorPixels);
 
                 this.kinect.CoordinateMapper.MapDepthFrameToColorFrame(
                     DepthImageFormat.Resolution640x480Fps30,
@@ -600,16 +605,26 @@ namespace HIVE_KinectGame
                     }
                 }
 
-                if (this.foundPlayer)
+                // If we've found a player in the image, then run through the player mask
+                // and copy pixels from the RGB camera to a final image
+                // and save it as a screenshot.
+                if (true)//this.foundPlayer)
                 {
-                    // Do screenshot stuff.
-                    this.colorFrame.CopyPixelDataTo(this.colorPixels);
-                    Texture2D finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
-                    //finalImage.SetData(this.colorPixels);
-                    finalImage.SetData(this.greenScreenPixelData);
+                    // get the RGB color frame image
+                    // this.colorFrame.CopyPixelDataTo(this.colorPixels);
+
+                    // Create a new Texture2D in which we will store out final image (masked player image)
+                    this.finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
+
+                    // TODO: Process the image and merge the player onto our background scene.
+
+                    // Once we've completed processing the image, save it into the screenshots directory.
+                    this.finalImage.SetData(this.colorPixels);
+                    
+                    //finalImage.SetData(this.greenScreenPixelData);
                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                    finalImage.SaveAsPng(stream, 640, 480);
-                    //finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+                    this.finalImage.SaveAsPng(stream, 640, 480);
+                    this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
                     this.snapNumber++;
                     stream.Close();
                 }
@@ -919,6 +934,15 @@ namespace HIVE_KinectGame
             // If we are in the main 3D envrionment. This is the majority of the game.
             if (this.gameState == 1)
             {
+
+                if (this.finalImage != null)
+                {
+                    // TEMPORARY FORCE DRAW RGB
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(this.finalImage, new Rectangle(0, 0, 640, 480), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.End();
+                }
+
                 // If we are changing the 3D environment, then ensure we load a different background image than we just had.
                 if (this.sceneJustChanged == true)
                 {
