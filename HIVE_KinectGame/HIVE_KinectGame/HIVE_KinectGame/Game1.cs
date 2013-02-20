@@ -600,12 +600,13 @@ namespace HIVE_KinectGame
                     }
                 }
 
-                if (true)//this.foundPlayer)
+                if (this.foundPlayer)
                 {
                     // Do screenshot stuff.
                     this.colorFrame.CopyPixelDataTo(this.colorPixels);
                     Texture2D finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
-                    finalImage.SetData(this.colorPixels);
+                    //finalImage.SetData(this.colorPixels);
+                    finalImage.SetData(this.greenScreenPixelData);
                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
                     finalImage.SaveAsPng(stream, 640, 480);
                     //finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
