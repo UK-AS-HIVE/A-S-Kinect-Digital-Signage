@@ -147,8 +147,8 @@ namespace HIVE_KinectGame
         /// </summary>
         private const int WindowedWidth = 1280;
         private const int WindowedHeight = 720;
-        private const int FullScreenWidth = 1680; // Change to 1920 for final
-        private const int FullScreenHeight = 1050; // Change to 1080 for final
+        private const int FullScreenWidth = 1920; // Change to 1920 for final
+        private const int FullScreenHeight = 1080; // Change to 1080 for final
 
         /// <summary>
         /// This will be loaded with the 3D mesh of the avatars we will animate
@@ -552,6 +552,10 @@ namespace HIVE_KinectGame
 
                 this.depthFrame.CopyDepthImagePixelDataTo(this.depthPixels);
                 this.colorFrame.CopyPixelDataTo(this.colorPixels);
+                // Create a new Texture2D in which we will store out final image (masked player image)
+                this.finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
+                // Once we've completed processing the image, save it into the screenshots directory.
+                this.finalImage.SetData(this.colorPixels);
 
                 this.kinect.CoordinateMapper.MapDepthFrameToColorFrame(
                     DepthImageFormat.Resolution640x480Fps30,
@@ -613,18 +617,15 @@ namespace HIVE_KinectGame
                     // get the RGB color frame image
                     // this.colorFrame.CopyPixelDataTo(this.colorPixels);
 
-                    // Create a new Texture2D in which we will store out final image (masked player image)
-                    this.finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
-
+                    
                     // TODO: Process the image and merge the player onto our background scene.
 
-                    // Once we've completed processing the image, save it into the screenshots directory.
-                    this.finalImage.SetData(this.colorPixels);
+                    
                     
                     //finalImage.SetData(this.greenScreenPixelData);
                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
                     this.finalImage.SaveAsPng(stream, 640, 480);
-                    this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+                    //this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
                     this.snapNumber++;
                     stream.Close();
                 }

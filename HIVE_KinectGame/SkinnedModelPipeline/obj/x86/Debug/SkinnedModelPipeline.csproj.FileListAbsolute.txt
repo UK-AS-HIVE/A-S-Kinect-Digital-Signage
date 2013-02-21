@@ -12,3 +12,10 @@ C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\Ski
 C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
 C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.dll
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb
