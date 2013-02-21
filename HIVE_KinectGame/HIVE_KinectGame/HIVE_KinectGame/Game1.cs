@@ -548,14 +548,8 @@ namespace HIVE_KinectGame
                 this.depthPixels = new DepthImagePixel[this.kinect.DepthStream.FramePixelDataLength];
                 this.greenScreenPixelData = new int[this.kinect.DepthStream.FramePixelDataLength];
                 this.colorCoordinates = new ColorImagePoint[this.kinect.DepthStream.FramePixelDataLength];
-                this.colorPixels = new Byte[colorFrame.PixelDataLength];
 
                 this.depthFrame.CopyDepthImagePixelDataTo(this.depthPixels);
-                this.colorFrame.CopyPixelDataTo(this.colorPixels);
-                // Create a new Texture2D in which we will store out final image (masked player image)
-                this.finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
-                // Once we've completed processing the image, save it into the screenshots directory.
-                this.finalImage.SetData(this.colorPixels);
 
                 this.kinect.CoordinateMapper.MapDepthFrameToColorFrame(
                     DepthImageFormat.Resolution640x480Fps30,
@@ -616,18 +610,38 @@ namespace HIVE_KinectGame
                 {
                     // get the RGB color frame image
                     // this.colorFrame.CopyPixelDataTo(this.colorPixels);
+                    byte[] colorFrameData = null;
+                    RenderTarget2D cameraTexture = new RenderTarget2D(this.GraphicsDevice, 640, 480);
+                    using (var frame = this.kinect.ColorStream.OpenNextFrame(0))
+                    {
+                        if (frame != null)
+                        {
+                            if (colorFrameData == null || colorFrameData.Length != frame.PixelDataLength)
+                            {
+                                colorFrameData = new byte[frame.PixelDataLength];
+                            }
+
+                            frame.CopyPixelDataTo(colorFrameData);
+                            GraphicsDevice.Textures[0] = null;
+                            cameraTexture.SetData<byte>(colorFrameData);
+
+                            // TODO: Process the image and merge the player onto our background scene.
+
+
+
+                            //finalImage.SetData(this.greenScreenPixelData);
+                            Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
+                            cameraTexture.SaveAsPng(stream, 640, 480);
+                            //this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+                            this.snapNumber++;
+                            stream.Close();
+
+                        }
+                    }
+                    
 
                     
-                    // TODO: Process the image and merge the player onto our background scene.
-
                     
-                    
-                    //finalImage.SetData(this.greenScreenPixelData);
-                    Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                    this.finalImage.SaveAsPng(stream, 640, 480);
-                    //this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-                    this.snapNumber++;
-                    stream.Close();
                 }
                     this.takeScreencap = false;
                     this.sceneJustChanged = true;

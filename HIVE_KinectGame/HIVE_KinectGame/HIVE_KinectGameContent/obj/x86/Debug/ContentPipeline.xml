@@ -20,7 +20,7 @@
       <Time>2013-02-21T16:01:16.7102257-05:00</Time>
       <Dependency>
         <Key>obj\x86\Debug\dude_0.xml</Key>
-        <Value>2013-02-21T16:10:58.1212048-05:00</Value>
+        <Value>2013-02-21T16:36:49.1460519-05:00</Value>
       </Dependency>
       <Request>C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\head_0.xnb</Request>
       <Request>C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\Content\jacket_0.xnb</Request>
@@ -112,7 +112,7 @@
     <Assemblies>
       <Assembly>
         <Key>C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll</Key>
-        <Value>2013-02-21T16:10:53.7587978-05:00</Value>
+        <Value>2013-02-21T16:36:45.770241-05:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
