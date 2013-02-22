@@ -230,7 +230,7 @@ namespace HIVE_KinectGame
         /// <summary>
         /// The final rendered image with the screenscreen processed onto it.
         /// </summary>
-        private Texture2D finalImage = null;
+        private Texture2D colorVideo = null;
 
         /// <summary>
         /// The index of which slide in the slideshow we look at.
@@ -272,11 +272,6 @@ namespace HIVE_KinectGame
         private int alphaValue = 255;
         private Boolean updateAlpha = false;
         private int fadeAmount = 10;
-
-        /// <summary>
-        /// Intermediate storage for the color data received from the camera
-        /// </summary>
-        private Byte[] colorPixels = null;
 
         /// <summary>
         /// Intermediate storage for the depth data received from the sensor
@@ -559,6 +554,23 @@ namespace HIVE_KinectGame
 
                 Array.Clear(greenScreenPixelData, 0, greenScreenPixelData.Length);
 
+                //Create array for pixel data and copy it from the image frame
+                Byte[] pixelData = new Byte[colorFrame.PixelDataLength];
+                colorFrame.CopyPixelDataTo(pixelData);
+
+                //Convert RGBA to BGRA
+                Byte[] bgraPixelData = new Byte[colorFrame.PixelDataLength];
+                for (int i = 0; i < pixelData.Length; i += 4)
+                {
+                    bgraPixelData[i] = pixelData[i + 2];
+                    bgraPixelData[i + 1] = pixelData[i + 1];
+                    bgraPixelData[i + 2] = pixelData[i];
+                    bgraPixelData[i + 3] = (Byte)255; //The video comes with 0 alpha so it is transparent
+                }
+
+                this.colorVideo = new Texture2D(this.graphics.GraphicsDevice, colorFrame.Width, colorFrame.Height);
+                this.colorVideo.SetData(bgraPixelData);
+
                 this.foundPlayer = false;
                 // loop over each row and column of the depth
                 for (int y = 0; y < 480; ++y)
@@ -606,45 +618,18 @@ namespace HIVE_KinectGame
                 // If we've found a player in the image, then run through the player mask
                 // and copy pixels from the RGB camera to a final image
                 // and save it as a screenshot.
-                if (true)//this.foundPlayer)
+                if (this.colorVideo != null && this.foundPlayer == true)
                 {
-                    // get the RGB color frame image
-                    // this.colorFrame.CopyPixelDataTo(this.colorPixels);
-                    byte[] colorFrameData = null;
-                    RenderTarget2D cameraTexture = new RenderTarget2D(this.GraphicsDevice, 640, 480);
-                    using (var frame = this.kinect.ColorStream.OpenNextFrame(0))
-                    {
-                        if (frame != null)
-                        {
-                            if (colorFrameData == null || colorFrameData.Length != frame.PixelDataLength)
-                            {
-                                colorFrameData = new byte[frame.PixelDataLength];
-                            }
-
-                            frame.CopyPixelDataTo(colorFrameData);
-                            GraphicsDevice.Textures[0] = null;
-                            cameraTexture.SetData<byte>(colorFrameData);
-
-                            // TODO: Process the image and merge the player onto our background scene.
-
-
-
-                            //finalImage.SetData(this.greenScreenPixelData);
-                            Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                            cameraTexture.SaveAsPng(stream, 640, 480);
-                            //this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-                            this.snapNumber++;
-                            stream.Close();
-
-                        }
-                    }
                     
-
-                    
-                    
-                }
+                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
+                     //this.colorVideo.SaveAsJpeg(stream, 640, 480);
+                     this.colorVideo.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+                     this.snapNumber++;
+                     stream.Close();
+                     this.sceneJustChanged = true;
+                  }
                     this.takeScreencap = false;
-                    this.sceneJustChanged = true;
+                    
             }
 
 
@@ -920,7 +905,7 @@ namespace HIVE_KinectGame
         {
             // Clear the screen so we don't have artifacts from updating.
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-
+           
             #region DisplaySplashScreenState
             // If we are in the intro graphic screen. This will only happen at game startup.
             if (this.gameState == 0) 
@@ -949,14 +934,6 @@ namespace HIVE_KinectGame
             // If we are in the main 3D envrionment. This is the majority of the game.
             if (this.gameState == 1)
             {
-
-                if (this.finalImage != null)
-                {
-                    // TEMPORARY FORCE DRAW RGB
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(this.finalImage, new Rectangle(0, 0, 640, 480), Microsoft.Xna.Framework.Color.White);
-                    spriteBatch.End();
-                }
 
                 // If we are changing the 3D environment, then ensure we load a different background image than we just had.
                 if (this.sceneJustChanged == true)
@@ -1104,7 +1081,13 @@ namespace HIVE_KinectGame
             }
 
             #endregion
-
+            // Draw RGB video
+            /*if (this.colorVideo != null && this.takeScreencap == true)
+            {
+                spriteBatch.Begin();
+                spriteBatch.Draw(this.colorVideo, new Rectangle(0, 0, 640, 480), Microsoft.Xna.Framework.Color.White);
+                spriteBatch.End();
+            } */
             base.Draw(gameTime);
         }
 
