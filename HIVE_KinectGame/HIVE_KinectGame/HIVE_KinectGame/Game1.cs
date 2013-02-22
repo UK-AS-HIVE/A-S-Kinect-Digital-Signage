@@ -569,7 +569,7 @@ namespace HIVE_KinectGame
                 }
 
                 this.colorVideo = new Texture2D(this.graphics.GraphicsDevice, colorFrame.Width, colorFrame.Height);
-                this.colorVideo.SetData(bgraPixelData);
+                
 
                 this.foundPlayer = false;
                 // loop over each row and column of the depth
@@ -592,6 +592,7 @@ namespace HIVE_KinectGame
                             ColorImagePoint colorImagePoint = this.colorCoordinates[depthIndex];
 
                             // scale color coordinates to depth resolution
+
                             int colorInDepthX = colorImagePoint.X / this.colorToDepthDivisor;
                             int colorInDepthY = colorImagePoint.Y / this.colorToDepthDivisor;
 
@@ -620,15 +621,37 @@ namespace HIVE_KinectGame
                 // and save it as a screenshot.
                 if (this.colorVideo != null && this.foundPlayer == true)
                 {
+                    for (int i = 0; i < greenScreenPixelData.Length; i ++)
+                    {
+                        if (greenScreenPixelData[i] != -1)
+                        {
+                            bgraPixelData[(4*i)+3] = (Byte)0; //The video comes with 0 alpha so it is transparent
+                        }
+                    }
+                    this.colorVideo.SetData(bgraPixelData);
+
+                    RenderTarget2D renderTarget2D = new RenderTarget2D(this.GraphicsDevice, 1326, 997);
+                    this.GraphicsDevice.SetRenderTarget(renderTarget2D);
                     
-                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                     //this.colorVideo.SaveAsJpeg(stream, 640, 480);
-                     this.colorVideo.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-                     this.snapNumber++;
-                     stream.Close();
-                     this.sceneJustChanged = true;
+                    // Draw here
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                    
+                    spriteBatch.Draw(this.envImages[this.whichEnv], new Rectangle(0, 0, 1326, 997), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.Draw(this.colorVideo, new Rectangle(300, 300, 640, 480), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.End();
+                    this.GraphicsDevice.SetRenderTarget(null);
+
+                    
+                    Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
+
+                    renderTarget2D.SaveAsPng(stream, 1325, 995);
+                    //this.colorVideo.SaveAsPng(stream, 640, 480);
+                    this.snapNumber++;
+                    stream.Close();
+                     
                   }
                     this.takeScreencap = false;
+                    this.sceneJustChanged = true;
                     
             }
 
@@ -681,6 +704,7 @@ namespace HIVE_KinectGame
                     else { this.animator[1].SkeletonVisible = false; }
                 }
             }
+
         }
 
         /// <summary>
@@ -1004,6 +1028,7 @@ namespace HIVE_KinectGame
                     this.snapNumber++;
                     this.gameState = 2;
                     this.gameTimer = 0;
+
                 }
 
                 // If we've been on this particular 3D scene for 10 seconds, take a snap and change it!
@@ -1058,13 +1083,24 @@ namespace HIVE_KinectGame
 
                 if (this.slideshowImages != null)
                 {
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(369, 29, 884, 664), Microsoft.Xna.Framework.Color.White);
-                    spriteBatch.End();
+                    if (this.isFullScreen)
+                    {
+                        spriteBatch.Begin();
+                        // Hard-coded values are bad. Oh well.
+                        spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(553, 44, 1326, 997), Microsoft.Xna.Framework.Color.White);
+                        spriteBatch.End();
+                    }
+                    else
+                    {
+                        spriteBatch.Begin();
+                        // Windowed mode is forcing 1280x720....
+                        spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(369, 29, 884, 664), Microsoft.Xna.Framework.Color.White);
+                        spriteBatch.End();
+                    }
                 }
 
                 // If we've looked at this image for a few seconds, change it.
-                if (Math.Floor(this.gameTimer) % 2 == 0)
+                if (Math.Floor(this.gameTimer) % 4 == 0)
                 {
                     this.sceneJustChanged = true;
                 }
@@ -1074,20 +1110,15 @@ namespace HIVE_KinectGame
                     this.gameState = 0;
                     this.gameTimer = 0;
                     this.alphaValue = 255;
+                    // When we go back to the 3D environment, make sure we load a new background image.
+                    this.sceneJustChanged = true;
                 }
 
-                // When we go back to the 3D environment, make sure we load a new background image.
-                this.sceneJustChanged = true;
+                
             }
 
             #endregion
-            // Draw RGB video
-            /*if (this.colorVideo != null && this.takeScreencap == true)
-            {
-                spriteBatch.Begin();
-                spriteBatch.Draw(this.colorVideo, new Rectangle(0, 0, 640, 480), Microsoft.Xna.Framework.Color.White);
-                spriteBatch.End();
-            } */
+
             base.Draw(gameTime);
         }
 
