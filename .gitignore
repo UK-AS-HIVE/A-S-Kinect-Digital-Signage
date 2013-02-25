@@ -1,3 +1,8 @@
 .DS_Store
+
 HIVE_KinectGame/.DS_Store
-HIVE_KinectGame/HIVE_KinectGame/.DS_Store
+
+HIVE_KinectGame/HIVE_KinectGame/
+.DS_Store
+
+.DS_Store

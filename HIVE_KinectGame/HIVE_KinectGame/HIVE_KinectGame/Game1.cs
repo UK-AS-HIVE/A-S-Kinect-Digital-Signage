@@ -147,8 +147,8 @@ namespace HIVE_KinectGame
         /// </summary>
         private const int WindowedWidth = 1280;
         private const int WindowedHeight = 720;
-        private const int FullScreenWidth = 1680; // Change to 1920 for final
-        private const int FullScreenHeight = 1050; // Change to 1080 for final
+        private const int FullScreenWidth = 1920; // Change to 1920 for final
+        private const int FullScreenHeight = 1080; // Change to 1080 for final
 
         /// <summary>
         /// This will be loaded with the 3D mesh of the avatars we will animate
@@ -230,7 +230,7 @@ namespace HIVE_KinectGame
         /// <summary>
         /// The final rendered image with the screenscreen processed onto it.
         /// </summary>
-        private Texture2D finalImage = null;
+        private Texture2D colorVideo = null;
 
         /// <summary>
         /// The index of which slide in the slideshow we look at.
@@ -272,11 +272,6 @@ namespace HIVE_KinectGame
         private int alphaValue = 255;
         private Boolean updateAlpha = false;
         private int fadeAmount = 10;
-
-        /// <summary>
-        /// Intermediate storage for the color data received from the camera
-        /// </summary>
-        private Byte[] colorPixels = null;
 
         /// <summary>
         /// Intermediate storage for the depth data received from the sensor
@@ -548,10 +543,8 @@ namespace HIVE_KinectGame
                 this.depthPixels = new DepthImagePixel[this.kinect.DepthStream.FramePixelDataLength];
                 this.greenScreenPixelData = new int[this.kinect.DepthStream.FramePixelDataLength];
                 this.colorCoordinates = new ColorImagePoint[this.kinect.DepthStream.FramePixelDataLength];
-                this.colorPixels = new Byte[colorFrame.PixelDataLength];
 
                 this.depthFrame.CopyDepthImagePixelDataTo(this.depthPixels);
-                this.colorFrame.CopyPixelDataTo(this.colorPixels);
 
                 this.kinect.CoordinateMapper.MapDepthFrameToColorFrame(
                     DepthImageFormat.Resolution640x480Fps30,
@@ -560,6 +553,23 @@ namespace HIVE_KinectGame
                     this.colorCoordinates);
 
                 Array.Clear(greenScreenPixelData, 0, greenScreenPixelData.Length);
+
+                //Create array for pixel data and copy it from the image frame
+                Byte[] pixelData = new Byte[colorFrame.PixelDataLength];
+                colorFrame.CopyPixelDataTo(pixelData);
+
+                //Convert RGBA to BGRA
+                Byte[] bgraPixelData = new Byte[colorFrame.PixelDataLength];
+                for (int i = 0; i < pixelData.Length; i += 4)
+                {
+                    bgraPixelData[i] = pixelData[i + 2];
+                    bgraPixelData[i + 1] = pixelData[i + 1];
+                    bgraPixelData[i + 2] = pixelData[i];
+                    bgraPixelData[i + 3] = (Byte)255; //The video comes with 0 alpha so it is transparent
+                }
+
+                this.colorVideo = new Texture2D(this.graphics.GraphicsDevice, colorFrame.Width, colorFrame.Height);
+                
 
                 this.foundPlayer = false;
                 // loop over each row and column of the depth
@@ -582,6 +592,7 @@ namespace HIVE_KinectGame
                             ColorImagePoint colorImagePoint = this.colorCoordinates[depthIndex];
 
                             // scale color coordinates to depth resolution
+
                             int colorInDepthX = colorImagePoint.X / this.colorToDepthDivisor;
                             int colorInDepthY = colorImagePoint.Y / this.colorToDepthDivisor;
 
@@ -608,28 +619,40 @@ namespace HIVE_KinectGame
                 // If we've found a player in the image, then run through the player mask
                 // and copy pixels from the RGB camera to a final image
                 // and save it as a screenshot.
-                if (true)//this.foundPlayer)
+                if (this.colorVideo != null && this.foundPlayer == true)
                 {
-                    // get the RGB color frame image
-                    // this.colorFrame.CopyPixelDataTo(this.colorPixels);
+                    for (int i = 0; i < greenScreenPixelData.Length; i ++)
+                    {
+                        if (greenScreenPixelData[i] != -1)
+                        {
+                            bgraPixelData[(4*i)+3] = (Byte)0; //The video comes with 0 alpha so it is transparent
+                        }
+                    }
+                    this.colorVideo.SetData(bgraPixelData);
 
-                    // Create a new Texture2D in which we will store out final image (masked player image)
-                    this.finalImage = new Texture2D(graphics.GraphicsDevice, this.kinect.ColorStream.FrameWidth, this.kinect.ColorStream.FrameHeight);
-
-                    // TODO: Process the image and merge the player onto our background scene.
-
-                    // Once we've completed processing the image, save it into the screenshots directory.
-                    this.finalImage.SetData(this.colorPixels);
+                    RenderTarget2D renderTarget2D = new RenderTarget2D(this.GraphicsDevice, 1326, 997);
+                    this.GraphicsDevice.SetRenderTarget(renderTarget2D);
                     
-                    //finalImage.SetData(this.greenScreenPixelData);
+                    // Draw here
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                    
+                    spriteBatch.Draw(this.envImages[this.whichEnv], new Rectangle(0, 0, 1326, 997), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.Draw(this.colorVideo, new Rectangle(300, 300, 640, 480), Microsoft.Xna.Framework.Color.White);
+                    spriteBatch.End();
+                    this.GraphicsDevice.SetRenderTarget(null);
+
+                    
                     Stream stream = File.OpenWrite(this.Content.RootDirectory + "\\screenshots\\" + "snapshot-" + this.snapNumber + ".png");
-                    this.finalImage.SaveAsPng(stream, 640, 480);
-                    this.finalImage.SaveAsPng(stream, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+
+                    renderTarget2D.SaveAsPng(stream, 1325, 995);
+                    //this.colorVideo.SaveAsPng(stream, 640, 480);
                     this.snapNumber++;
                     stream.Close();
-                }
+                     
+                  }
                     this.takeScreencap = false;
                     this.sceneJustChanged = true;
+                    
             }
 
 
@@ -681,6 +704,7 @@ namespace HIVE_KinectGame
                     else { this.animator[1].SkeletonVisible = false; }
                 }
             }
+
         }
 
         /// <summary>
@@ -905,7 +929,7 @@ namespace HIVE_KinectGame
         {
             // Clear the screen so we don't have artifacts from updating.
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-
+           
             #region DisplaySplashScreenState
             // If we are in the intro graphic screen. This will only happen at game startup.
             if (this.gameState == 0) 
@@ -934,14 +958,6 @@ namespace HIVE_KinectGame
             // If we are in the main 3D envrionment. This is the majority of the game.
             if (this.gameState == 1)
             {
-
-                if (this.finalImage != null)
-                {
-                    // TEMPORARY FORCE DRAW RGB
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(this.finalImage, new Rectangle(0, 0, 640, 480), Microsoft.Xna.Framework.Color.White);
-                    spriteBatch.End();
-                }
 
                 // If we are changing the 3D environment, then ensure we load a different background image than we just had.
                 if (this.sceneJustChanged == true)
@@ -1012,6 +1028,7 @@ namespace HIVE_KinectGame
                     this.snapNumber++;
                     this.gameState = 2;
                     this.gameTimer = 0;
+
                 }
 
                 // If we've been on this particular 3D scene for 10 seconds, take a snap and change it!
@@ -1066,13 +1083,24 @@ namespace HIVE_KinectGame
 
                 if (this.slideshowImages != null)
                 {
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(369, 29, 884, 664), Microsoft.Xna.Framework.Color.White);
-                    spriteBatch.End();
+                    if (this.isFullScreen)
+                    {
+                        spriteBatch.Begin();
+                        // Hard-coded values are bad. Oh well.
+                        spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(553, 44, 1326, 997), Microsoft.Xna.Framework.Color.White);
+                        spriteBatch.End();
+                    }
+                    else
+                    {
+                        spriteBatch.Begin();
+                        // Windowed mode is forcing 1280x720....
+                        spriteBatch.Draw(this.slideshowImages[this.whichSlide], new Rectangle(369, 29, 884, 664), Microsoft.Xna.Framework.Color.White);
+                        spriteBatch.End();
+                    }
                 }
 
                 // If we've looked at this image for a few seconds, change it.
-                if (Math.Floor(this.gameTimer) % 2 == 0)
+                if (Math.Floor(this.gameTimer) % 4 == 0)
                 {
                     this.sceneJustChanged = true;
                 }
@@ -1082,10 +1110,11 @@ namespace HIVE_KinectGame
                     this.gameState = 0;
                     this.gameTimer = 0;
                     this.alphaValue = 255;
+                    // When we go back to the 3D environment, make sure we load a new background image.
+                    this.sceneJustChanged = true;
                 }
 
-                // When we go back to the 3D environment, make sure we load a new background image.
-                this.sceneJustChanged = true;
+                
             }
 
             #endregion
