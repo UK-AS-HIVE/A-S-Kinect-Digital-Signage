@@ -1,0 +1,35 @@
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.dll
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.pdb
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.csprojResolveAssemblyReference.cache
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\vincent\Desktop\HIVE Kinect\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.dll
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.pdb
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\vtpu222\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.dll
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.dll
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.pdb
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.csprojResolveAssemblyReference.cache
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\vincent\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModelPipeline.pdb
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.dll
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\bin\x86\Debug\SkinnedModel.pdb
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.dll
+C:\Users\hive\Desktop\A-S-Kinect-Digital-Signage-Demo-Version\A-S-Kinect-Digital-Signage-Demo-Version\HIVE_KinectGame\SkinnedModelPipeline\obj\x86\Debug\SkinnedModelPipeline.pdb

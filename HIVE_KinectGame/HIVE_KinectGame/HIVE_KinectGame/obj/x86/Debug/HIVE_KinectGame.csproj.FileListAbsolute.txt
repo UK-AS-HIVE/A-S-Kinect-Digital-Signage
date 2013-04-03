@@ -43,3 +43,7 @@ C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_K
 C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\obj\x86\Debug\HIVE_KinectGame.exe
 C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\obj\x86\Debug\HIVE_KinectGame.pdb
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\HIVE_KinectGame.exe.manifest
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\bin\x86\Debug\HIVE_KinectGame.application
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\obj\x86\Debug\HIVE_KinectGame.exe.manifest
+C:\Users\hive\Documents\GitHub\A-S-Kinect-Digital-Signage\HIVE_KinectGame\HIVE_KinectGame\HIVE_KinectGame\obj\x86\Debug\HIVE_KinectGame.application
